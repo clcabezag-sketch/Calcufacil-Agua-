@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Agua · Los Maestros 134</title>
+<style>
+  :root{
+    --teal:#0E6E76;
+    --teal-dark:#0A4F55;
+    --ink:#1B2B2D;
+    --paper:#F6FAF9;
+    --card:#FFFFFF;
+    --line:#DCE7E6;
+    --p1:#0E6E76;
+    --p2a:#C96F3E;
+    --p2b:#D9A441;
+    --p3:#3D5A80;
+    --good:#2E7D5B;
+    --warn:#B3541E;
+    font-size: 20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+  .screen{
+    display:none;
+    flex:1;
+    flex-direction:column;
+    padding:28px 22px 120px 22px;
+    max-width:560px;
+    margin:0 auto;
+    width:100%;
+  }
+  .screen.active{display:flex;}
+
+  header.topbar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:22px 22px 10px 22px;
+    max-width:560px;
+    margin:0 auto;
+    width:100%;
+  }
+  header.topbar .drop{font-size:34px;line-height:1;}
+  header.topbar h1{
+    font-size:22px;
+    margin:0;
+    color:var(--teal-dark);
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  header.topbar .sub{
+    font-size:14px;
+    color:#5B6E6E;
+    margin-top:2px;
+  }
+
+  /* HOME */
+  .home-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:26px;
+    margin-bottom:18px;
+  }
+  .home-card .label{font-size:15px;color:#5B6E6E;margin-bottom:6px;}
+  .home-card .value{font-size:26px;font-weight:800;color:var(--teal-dark);}
+  .big-btn{
+    display:block;
+    width:100%;
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:20px;
+    padding:26px 20px;
+    font-size:24px;
+    font-weight:800;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:0 6px 0 var(--teal-dark);
+    margin-bottom:18px;
+  }
+  .big-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--teal-dark);}
+  .secondary-btn{
+    display:block;
+    width:100%;
+    background:transparent;
+    color:var(--teal-dark);
+    border:2px solid var(--line);
+    border-radius:18px;
+    padding:18px 20px;
+    font-size:19px;
+    font-weight:700;
+    text-align:center;
+    cursor:pointer;
+    margin-bottom:14px;
+  }
+
+  /* STEP SCREENS */
+  .step-progress{
+    display:flex;
+    gap:8px;
+    margin-bottom:26px;
+  }
+  .dot{
+    height:8px;
+    flex:1;
+    border-radius:5px;
+    background:var(--line);
+  }
+  .dot.done{background:var(--teal);}
+  .dot.now{background:var(--teal);opacity:.5;}
+
+  .step-title{
+    font-size:26px;
+    font-weight:800;
+    color:var(--teal-dark);
+    margin:0 0 8px 0;
+    line-height:1.25;
+  }
+  .step-hint{
+    font-size:16px;
+    color:#5B6E6E;
+    margin-bottom:26px;
+    line-height:1.4;
+  }
+  .ref-box{
+    background:#EAF3F2;
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:16px;
+    color:var(--teal-dark);
+    margin-bottom:22px;
+  }
+  .num-input-wrap{
+    position:relative;
+    margin-bottom:14px;
+  }
+  input[type=number]{
+    width:100%;
+    font-size:52px;
+    font-weight:800;
+    text-align:center;
+    padding:26px 16px;
+    border-radius:20px;
+    border:3px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    -moz-appearance:textfield;
+  }
+  input[type=number]:focus{
+    outline:none;
+    border-color:var(--teal);
+  }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button{
+    -webkit-appearance:none;margin:0;
+  }
+  .unit-label{
+    text-align:center;
+    font-size:17px;
+    color:#5B6E6E;
+    margin-bottom:8px;
+    font-weight:600;
+  }
+  .live-diff{
+    text-align:center;
+    font-size:17px;
+    color:var(--good);
+    font-weight:700;
+    min-height:26px;
+    margin-bottom:10px;
+  }
+  .live-diff.warn{color:var(--warn);}
+
+  .nav-row{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:linear-gradient(to top, var(--paper) 60%, rgba(246,250,249,0));
+    padding:24px 22px 26px 22px;
+    display:flex;
+    gap:12px;
+    max-width:560px;
+    margin:0 auto;
+  }
+  .nav-row .back-btn{
+    flex:0 0 74px;
+    background:var(--card);
+    border:2px solid var(--line);
+    border-radius:18px;
+    font-size:26px;
+    color:var(--teal-dark);
+    cursor:pointer;
+  }
+  .nav-row .next-btn{
+    flex:1;
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:18px;
+    font-size:22px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 6px 0 var(--teal-dark);
+  }
+  .nav-row .next-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--teal-dark);}
+
+  /* RESULTS */
+  .result-header{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .result-header .month{
+    font-size:16px;
+    color:#5B6E6E;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .result-header .total{
+    font-size:44px;
+    font-weight:900;
+    color:var(--teal-dark);
+    margin-top:4px;
+  }
+  .floor-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:10px solid var(--p1);
+    border-radius:18px;
+    padding:20px 22px;
+    margin-bottom:14px;
+  }
+  .floor-card .fname{font-size:20px;font-weight:800;}
+  .floor-card .fmeta{font-size:14px;color:#5B6E6E;margin-top:3px;}
+  .floor-card .famt{font-size:28px;font-weight:900;color:var(--teal-dark);}
+
+  .result-actions{margin-top:20px;}
+
+  /* HISTORY */
+  .hist-item{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 20px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .hist-item .hname{font-weight:800;font-size:18px;}
+  .hist-item .hamt{font-weight:800;font-size:18px;color:var(--teal-dark);}
+  .empty-msg{
+    text-align:center;
+    color:#5B6E6E;
+    font-size:17px;
+    margin-top:40px;
+    line-height:1.5;
+  }
+
+  /* SETTINGS (small, tucked away) */
+  .settings-link{
+    text-align:center;
+    font-size:13px;
+    color:#9AAAAA;
+    margin-top:10px;
+    text-decoration:underline;
+    cursor:pointer;
+  }
+  .field-row{margin-bottom:16px;}
+  .field-row label{display:block;font-size:14px;color:#5B6E6E;margin-bottom:6px;font-weight:700;}
+  .field-row input{
+    width:100%;
+    font-size:20px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:2px solid var(--line);
+  }
+  .save-settings{
+    background:var(--teal);color:#fff;border:none;border-radius:14px;
+    padding:16px;font-size:18px;font-weight:800;width:100%;cursor:pointer;margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="drop">💧</div>
+  <div>
+    <h1>Agua · Los Maestros 134</h1>
+    <div class="sub" id="topSub">Calculadora del recibo de agua</div>
+  </div>
+</header>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="home-card" id="homeLastCard" style="display:none;">
+    <div class="label">Último cálculo guardado</div>
+    <div class="value" id="homeLastMonth">—</div>
+  </div>
+  <button class="big-btn" onclick="startWizard()">📖 Nueva lectura del mes</button>
+  <button class="secondary-btn" onclick="showScreen('screen-history')">📜 Ver historial</button>
+  <div class="settings-link" onclick="showScreen('screen-settings')">Ajustes</div>
+</div>
+
+<!-- WIZARD STEPS -->
+<div class="screen" id="screen-step">
+  <div class="step-progress" id="stepDots"></div>
+  <div class="step-title" id="stepTitle">—</div>
+  <div class="step-hint" id="stepHint"></div>
+  <div class="ref-box" id="stepRefBox"></div>
+  <div class="num-input-wrap">
+    <input type="number" inputmode="decimal" id="stepInput" placeholder="0" step="0.01" autocomplete="off">
+  </div>
+  <div class="unit-label" id="stepUnit">metros cúbicos (m³)</div>
+  <div class="live-diff" id="stepLiveDiff"></div>
+</div>
+
+<!-- RESULTS -->
+<div class="screen" id="screen-result">
+  <div class="result-header">
+    <div class="month" id="resMonth">MES</div>
+    <div class="total" id="resTotal">S/ 0.00</div>
+  </div>
+  <div id="resCards"></div>
+  <div class="result-actions">
+    <button class="big-btn" onclick="guardarResultado()">✅ Guardar y terminar</button>
+    <button class="secondary-btn" onclick="window.print()">🖨️ Imprimir / Compartir</button>
+    <button class="secondary-btn" onclick="showScreen('screen-home')">Volver al inicio</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="step-title" style="margin-bottom:22px;">Historial</div>
+  <div id="histList"></div>
+  <button class="secondary-btn" onclick="showScreen('screen-home')" style="margin-top:10px;">Volver al inicio</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="screen-settings">
+  <div class="step-title" style="margin-bottom:8px;">Ajustes</div>
+  <div class="step-hint">Aquí se guardan las últimas lecturas de cada medidor. Solo cámbialas si necesitas corregir un número.</div>
+  <div class="field-row"><label>Lectura anterior — Medidor general (m³)</label><input type="number" id="cfgTotal"></div>
+  <div class="field-row"><label>Lectura anterior — 1er Piso (m³)</label><input type="number" id="cfgP1"></div>
+  <div class="field-row"><label>Lectura anterior — 2do Piso B (m³)</label><input type="number" id="cfgP2b"></div>
+  <div class="field-row"><label>Lectura anterior — 3er Piso (m³)</label><input type="number" id="cfgP3"></div>
+  <button class="save-settings" onclick="guardarAjustes()">Guardar ajustes</button>
+  <button class="secondary-btn" onclick="showScreen('screen-home')" style="margin-top:14px;">Volver al inicio</button>
+</div>
+
+<div class="nav-row" id="navRow" style="display:none;">
+  <button class="back-btn" onclick="stepBack()">←</button>
+  <button class="next-btn" id="nextBtn" onclick="stepNext()">Siguiente →</button>
+</div>
+
+<script>
+/* ---------- Almacenamiento ---------- */
+const STORAGE_KEY = 'agua_lm134_estado';
+const HIST_KEY = 'agua_lm134_historial';
+
+function cargarEstado(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{ return JSON.parse(raw); }catch(e){}
+  }
+  // valores iniciales (a partir del recibo de Junio 2026)
+  return {
+    anterior: { total:2733, p1:192.05, p2b:108.54, p3:160.09 },
+    ultimoMes: null
+  };
+}
+function guardarEstado(estado){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+}
+function cargarHistorial(){
+  const raw = localStorage.getItem(HIST_KEY);
+  if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+  return [];
+}
+function guardarHistorial(h){
+  localStorage.setItem(HIST_KEY, JSON.stringify(h));
+}
+
+let estado = cargarEstado();
+
+/* ---------- Navegación de pantallas ---------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('navRow').style.display = (id==='screen-step') ? 'flex' : 'none';
+  if(id==='screen-home') renderHome();
+  if(id==='screen-history') renderHistory();
+  if(id==='screen-settings') renderSettings();
+}
+
+function renderHome(){
+  const card = document.getElementById('homeLastCard');
+  if(estado.ultimoMes){
+    card.style.display='block';
+    document.getElementById('homeLastMonth').textContent = estado.ultimoMes;
+  } else {
+    card.style.display='none';
+  }
+}
+
+/* ---------- Asistente paso a paso ---------- */
+const pasos = [
+  { key:'total', title:'Lectura del medidor general', hint:'Es el medidor grande de toda la casa. Anota el número que aparece ahora.', unit:'metros cúbicos totales (m³)' },
+  { key:'p1',    title:'Lectura del medidor — 1er Piso', hint:'Anota el número que marca el medidor del primer piso.', unit:'metros cúbicos (m³)' },
+  { key:'p2b',   title:'Lectura del medidor — 2do Piso B', hint:'Anota el número que marca el medidor del segundo piso, lado B.', unit:'metros cúbicos (m³)' },
+  { key:'p3',    title:'Lectura del medidor — 3er Piso', hint:'Anota el número que marca el medidor del tercer piso.', unit:'metros cúbicos (m³)' },
+  { key:'monto', title:'Monto total del recibo', hint:'Escribe el monto TOTAL a pagar que aparece en el recibo de Sedalib.', unit:'soles (S/)' },
+];
+let pasoActual = 0;
+let respuestas = {};
+
+function startWizard(){
+  respuestas = {};
+  pasoActual = 0;
+  showScreen('screen-step');
+  renderStep();
+}
+
+function renderStep(){
+  const p = pasos[pasoActual];
+  document.getElementById('stepTitle').textContent = p.title;
+  document.getElementById('stepHint').textContent = p.hint;
+  document.getElementById('stepUnit').textContent = p.unit;
+
+  // puntos de progreso
+  const dots = document.getElementById('stepDots');
+  dots.innerHTML = '';
+  pasos.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i<pasoActual?' done':(i===pasoActual?' now':''));
+    dots.appendChild(d);
+  });
+
+  // caja de referencia
+  const refBox = document.getElementById('stepRefBox');
+  if(p.key === 'monto'){
+    refBox.style.display='none';
+  } else {
+    refBox.style.display='block';
+    refBox.textContent = 'Lectura anterior: ' + estado.anterior[p.key] + ' m³';
+  }
+
+  const input = document.getElementById('stepInput');
+  input.value = respuestas[p.key] !== undefined ? respuestas[p.key] : '';
+  input.placeholder = p.key==='monto' ? '0.00' : '0';
+  setTimeout(()=>{ input.focus(); input.select(); }, 50);
+
+  const liveDiff = document.getElementById('stepLiveDiff');
+  liveDiff.textContent = '';
+
+  input.oninput = ()=>{
+    if(p.key === 'monto'){ liveDiff.textContent=''; return; }
+    const v = parseFloat(input.value);
+    if(isNaN(v)){ liveDiff.textContent=''; return; }
+    const diff = v - estado.anterior[p.key];
+    if(diff < 0){
+      liveDiff.classList.add('warn');
+      liveDiff.textContent = '⚠️ Es menor que la lectura anterior, revisa el número';
+    } else {
+      liveDiff.classList.remove('warn');
+      liveDiff.textContent = 'Consumo este mes: ' + diff.toFixed(2) + ' m³';
+    }
+  };
+
+  document.getElementById('nextBtn').textContent = (pasoActual === pasos.length-1) ? 'Calcular →' : 'Siguiente →';
+}
+
+function stepNext(){
+  const p = pasos[pasoActual];
+  const input = document.getElementById('stepInput');
+  const v = parseFloat(input.value);
+  if(isNaN(v)){
+    input.style.borderColor = '#B3541E';
+    input.focus();
+    return;
+  }
+  respuestas[p.key] = v;
+  if(pasoActual < pasos.length-1){
+    pasoActual++;
+    renderStep();
+  } else {
+    calcularYMostrar();
+  }
+}
+
+function stepBack(){
+  if(pasoActual === 0){
+    showScreen('screen-home');
+    return;
+  }
+  pasoActual--;
+  renderStep();
+}
+
+/* ---------- Cálculo ---------- */
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+
+let ultimoResultado = null;
+
+function calcularYMostrar(){
+  const a = estado.anterior;
+  const totalConsumo = round2(respuestas.total - a.total);
+  const c1  = round2(respuestas.p1  - a.p1);
+  const c2b = round2(respuestas.p2b - a.p2b);
+  const c3  = round2(respuestas.p3  - a.p3);
+  const c2a = round2(totalConsumo - (c1 + c2b + c3));
+  const montoTotal = respuestas.monto;
+
+  const pisos = [
+    { nombre:'1er Piso',    consumo:c1,  color:'var(--p1)'  },
+    { nombre:'2do Piso A',  consumo:c2a, color:'var(--p2a)' },
+    { nombre:'2do Piso B',  consumo:c2b, color:'var(--p2b)' },
+    { nombre:'3er Piso',    consumo:c3,  color:'var(--p3)'  },
+  ];
+
+  pisos.forEach(p => p.pct = totalConsumo !== 0 ? p.consumo/totalConsumo : 0);
+  pisos.forEach(p => p.monto = round2(p.pct * montoTotal));
+
+  const sumaMontos = round2(pisos.reduce((s,p)=>s+p.monto,0));
+  const diff = round2(montoTotal - sumaMontos);
+  if(diff !== 0){
+    const mayor = pisos.reduce((a,b)=> b.monto>a.monto?b:a);
+    mayor.monto = round2(mayor.monto + diff);
+  }
+
+  const nombreMes = nombreMesActual();
+
+  ultimoResultado = { mes: nombreMes, montoTotal, totalConsumo, pisos, lecturasActuales: respuestas };
+
+  document.getElementById('resMonth').textContent = nombreMes;
+  document.getElementById('resTotal').textContent = 'S/ ' + montoTotal.toFixed(2);
+
+  const cont = document.getElementById('resCards');
+  cont.innerHTML = '';
+  pisos.forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'floor-card';
+    div.style.borderLeftColor = p.color;
+    div.innerHTML = `
+      <div>
+        <div class="fname">${p.nombre}</div>
+        <div class="fmeta">${p.consumo.toFixed(2)} m³ · ${(p.pct*100).toFixed(0)}%</div>
+      </div>
+      <div class="famt">S/ ${p.monto.toFixed(2)}</div>
+    `;
+    cont.appendChild(div);
+  });
+
+  showScreen('screen-result');
+}
+
+function nombreMesActual(){
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const d = new Date();
+  return meses[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function guardarResultado(){
+  if(!ultimoResultado) return;
+  // actualizar lecturas "anteriores" para el próximo mes
+  estado.anterior = {
+    total: ultimoResultado.lecturasActuales.total,
+    p1: ultimoResultado.lecturasActuales.p1,
+    p2b: ultimoResultado.lecturasActuales.p2b,
+    p3: ultimoResultado.lecturasActuales.p3,
+  };
+  estado.ultimoMes = ultimoResultado.mes;
+  guardarEstado(estado);
+
+  const hist = cargarHistorial();
+  hist.unshift(ultimoResultado);
+  guardarHistorial(hist);
+
+  showScreen('screen-home');
+}
+
+/* ---------- Historial ---------- */
+function renderHistory(){
+  const hist = cargarHistorial();
+  const list = document.getElementById('histList');
+  list.innerHTML = '';
+  if(hist.length === 0){
+    list.innerHTML = '<div class="empty-msg">Todavía no hay cálculos guardados.<br>Cuando guardes uno, aparecerá aquí.</div>';
+    return;
+  }
+  hist.forEach(h=>{
+    const div = document.createElement('div');
+    div.className = 'hist-item';
+    div.innerHTML = `<div class="hname">${h.mes}</div><div class="hamt">S/ ${h.montoTotal.toFixed(2)}</div>`;
+    list.appendChild(div);
+  });
+}
+
+/* ---------- Ajustes ---------- */
+function renderSettings(){
+  document.getElementById('cfgTotal').value = estado.anterior.total;
+  document.getElementById('cfgP1').value = estado.anterior.p1;
+  document.getElementById('cfgP2b').value = estado.anterior.p2b;
+  document.getElementById('cfgP3').value = estado.anterior.p3;
+}
+function guardarAjustes(){
+  estado.anterior.total = parseFloat(document.getElementById('cfgTotal').value) || 0;
+  estado.anterior.p1 = parseFloat(document.getElementById('cfgP1').value) || 0;
+  estado.anterior.p2b = parseFloat(document.getElementById('cfgP2b').value) || 0;
+  estado.anterior.p3 = parseFloat(document.getElementById('cfgP3').value) || 0;
+  guardarEstado(estado);
+  showScreen('screen-home');
+}
+
+/* ---------- Inicio ---------- */
+renderHome();
+</script>
+</body>
+</html>
